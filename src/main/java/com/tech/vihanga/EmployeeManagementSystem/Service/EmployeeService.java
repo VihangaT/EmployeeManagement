@@ -14,8 +14,9 @@ import java.util.UUID;
 public class EmployeeService {
 
     private final EmployeeRepository employeeRepo;
+
     @Autowired
-    public EmployeeService(EmployeeRepository employeeRepo) {
+    public EmployeeService(EmployeeRepository employeeRepo){
         this.employeeRepo = employeeRepo;
     }
 
@@ -33,12 +34,14 @@ public class EmployeeService {
         return employeeRepo.save(emploee);
     }
 
-    public void deleteEmployee(Long id){
+    public void deleteEmployee(Long id)
+    {
         employeeRepo.deleteEmployeeById(id);
     }
 
     public  Employee findEmployeeById(Long id){
         return employeeRepo.findEmployeeById(id).orElseThrow(()-> new UserNotFoundException("User by ID "+id + " does not exists"));
     }
+
 
 }
