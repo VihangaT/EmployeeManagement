@@ -22,7 +22,7 @@ export class AppComponent implements OnInit{
 
 public searchEmployees(key: string): void {};
 
-public onOpenModal(employee: Employee, mode: string): void {};
+
 
   public getEmployees():void{
     this.employeeService.getEmployees().subscribe(
@@ -34,4 +34,24 @@ public onOpenModal(employee: Employee, mode: string): void {};
       }
     )
   };
+
+  public onOpenModal(employee: Employee,mode:string):void{
+    const container =document.getElementById('main-container');
+    const button=document.createElement('button');
+    button.type='button';
+    button.style.display='none';
+    button.setAttribute('data-toggle','modal');
+    if(mode== 'add'){
+      button.setAttribute('data-target','#addEmployeeModel');
+    }
+    if(mode== 'edit'){
+      button.setAttribute('data-target','#updateEmployeeModel');
+    }
+    if(mode== 'delete'){
+      button.setAttribute('data-target','#deleteEmployeeModel');
+    }
+
+    container.appendChild(button);
+    button.click();
+  }
 }
