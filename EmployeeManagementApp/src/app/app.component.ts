@@ -1,8 +1,9 @@
-import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import {HttpErrorResponse} from '@angular/common/http';
+import {Component, OnInit} from '@angular/core';
+import {NgForm} from '@angular/forms';
 // import { EmptyError } from 'rxjs';
-import { Employee } from './employee';
-import { EmployeeService } from './employee.service';
+import {Employee} from './employee';
+import {EmployeeService} from './employee.service';
 
 @Component({
   selector: 'app-root',
@@ -12,6 +13,8 @@ import { EmployeeService } from './employee.service';
 export class AppComponent implements OnInit{
   title = 'EmployeeManagementApp';
   public employees: Employee[];
+  public editEmployee: Employee;
+  public deleteEmployee: Employee;
 
   constructor(private employeeService:EmployeeService){}
   ngOnInit(): void {
@@ -20,7 +23,22 @@ export class AppComponent implements OnInit{
 ;
 
 
-public searchEmployees(key: string): void {};
+public searchEmployees(key: string): void {
+  const results: Employee[] = [];
+  for(const employee of this.employees){
+    if(employee.name.toLowerCase().indexOf(key.toLowerCase()) !== -1 
+    || employee.email.toLowerCase().indexOf(key.toLowerCase()) !== -1 
+    || employee.phone.toLowerCase().indexOf(key.toLowerCase()) !== -1 
+    || employee.jobTitle.toLowerCase().indexOf(key.toLowerCase()) !== -1 
+    ){
+      results.push(employee);
+    }
+  }
+  this.employees=results;
+  if(results.length === 0 || !key){
+    this.getEmployees();
+  }
+};
 
 
 
@@ -35,6 +53,48 @@ public searchEmployees(key: string): void {};
     )
   };
 
+public onUpdateEmloyee(employee : Employee): void{
+  this.employeeService.UpdateEmployees(employee).subscribe(
+    (Response: Employee) => {
+      console.log(Response);
+      this.getEmployees();
+    },
+    (error: HttpErrorResponse) =>{
+      alert(error.message);
+    }
+    
+  )
+}
+
+public onDeleteEmloyee(employeeId : number): void{
+  this.employeeService.DeleteEmployees(employeeId).subscribe(
+    (Response: void) => {
+      console.log(Response);
+      this.getEmployees();
+    },
+    (error: HttpErrorResponse) =>{
+      alert(error.message);
+    }
+    
+  )
+}
+
+  public onAddEmployee(addform : NgForm): void{
+    document.getElementById("add-employee-form").click();
+      this.employeeService.addEmployees(addform.value).subscribe(
+        (response : Employee) => {
+          console.log(response);
+          this.getEmployees();
+          addform.reset();
+
+        },
+        (error: HttpErrorResponse) => {
+          alert(error.message);
+          addform.reset();
+        }
+      )
+  }
+
   public onOpenModal(employee: Employee,mode:string):void{
     const container =document.getElementById('main-container');
     const button=document.createElement('button');
@@ -45,9 +105,11 @@ public searchEmployees(key: string): void {};
       button.setAttribute('data-target','#addEmployeeModel');
     }
     if(mode== 'edit'){
-      button.setAttribute('data-target','#updateEmployeeModel');
+      this.editEmployee=employee;
+      button.setAttribute('data-target','#updateEmployeeModal');
     }
     if(mode== 'delete'){
+      this.deleteEmployee=employee;
       button.setAttribute('data-target','#deleteEmployeeModel');
     }
 

@@ -6,10 +6,11 @@ import com.tech.vihanga.EmployeeManagementSystem.Repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
+@Transactional
 @Service
 public class EmployeeService {
 
@@ -34,8 +35,7 @@ public class EmployeeService {
         return employeeRepo.save(emploee);
     }
 
-    public void deleteEmployee(Long id)
-    {
+    public void deleteEmployee(Long id) {
         employeeRepo.deleteEmployeeById(id);
     }
 
